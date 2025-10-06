@@ -7,8 +7,8 @@ type Tx = {
   id: string;
   title: string;
   subtitle?: string;
-  amount: number;
-  date: number; // epoch ms
+  amount: number;  // negativo = saída, positivo = entrada
+  date: number;
 };
 
 export function TransactionsSection({
@@ -36,17 +36,21 @@ export function TransactionsSection({
         </View>
       ) : (
         <View style={{ gap: spacing.sm }}>
-          {data.map(tx => (
-            <View key={tx.id} style={styles.item}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.itemTitle}>{tx.title}</Text>
-                {!!tx.subtitle && <Text style={styles.itemSub}>{tx.subtitle}</Text>}
+          {data.map(tx => {
+            const positive = tx.amount >= 0;
+            const amt = Math.abs(tx.amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            return (
+              <View key={tx.id} style={styles.item}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.itemTitle}>{tx.title}</Text>
+                  {!!tx.subtitle && <Text style={styles.itemSub}>{tx.subtitle}</Text>}
+                </View>
+                <Text style={[styles.itemAmt, { color: positive ? colors.success : colors.text }]}>
+                  {positive ? '+' : '-'}{amt}
+                </Text>
               </View>
-              <Text style={styles.itemAmt}>
-                {tx.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-              </Text>
-            </View>
-          ))}
+            );
+          })}
         </View>
       )}
     </View>
@@ -72,5 +76,5 @@ const styles = StyleSheet.create({
   },
   itemTitle: { color: colors.text, fontWeight: '700' },
   itemSub: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  itemAmt: { color: colors.text, fontWeight: '700', marginLeft: spacing.md },
+  itemAmt: { fontWeight: '700', marginLeft: spacing.md },
 });
