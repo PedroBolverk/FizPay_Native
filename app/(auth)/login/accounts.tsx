@@ -7,6 +7,7 @@ import { listAccounts } from '@/db/accounts';
 import type { Account } from '@/db/types';
 import { AccountListCard } from '@/components/common/AccountListCard';
 import { Screen } from '@/components/layout/Screen';
+import Feather from '@expo/vector-icons/Feather'
 
 export default function AccountsScreen() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function AccountsScreen() {
       {/* Header com gradiente */}
       <View style={styles.headerWrap}>
         <LinearGradient {...gradients.primary} style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}><Text style={{ color: '#fff' }}>{'< Voltar'}</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => router.back()}><Text style={{ color: '#fff'}}>{<Feather name="arrow-left" size={24} color="white" />}</Text></TouchableOpacity>
           <Text style={styles.headerTitle}>Login</Text>
         </LinearGradient>
       </View>
