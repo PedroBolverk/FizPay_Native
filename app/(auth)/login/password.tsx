@@ -1,4 +1,3 @@
-// src/screens/Password.tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,6 +8,7 @@ import { colors, gradients, radius, spacing } from '@/theme/tokens';
 import { getAccountById } from '@/db/accounts';
 import { loginWithPassword } from '@/db/auth';
 import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store'; // Usando expo-secure-store
 import type { Account } from '@/db/types';
 
 export default function Password() {
@@ -19,6 +19,19 @@ export default function Password() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+  const [savedCredentials, setSavedCredentials] = useState<{ username: string, password: string } | null>(null);
+
+  useEffect(() => {
+    // Recupera as credenciais salvas no SecureStore
+    const fetchCredentials = async () => {
+      const credentials = await SecureStore.getItemAsync('user_credentials');
+      if (credentials) {
+        setSavedCredentials(JSON.parse(credentials)); // Recupera as credenciais do SecureStore
+      }
+    };
+
+    fetchCredentials();
+  }, []);
 
   useEffect(() => {
     let alive = true;
@@ -58,8 +71,8 @@ export default function Password() {
 
       if (result.success) {
         if (acc) {
-          // Verifique se a biometria foi bem-sucedida e então faça o login
-          await loginWithPassword(acc.cpf_cnpj, pwd); // Aqui usa a senha armazenada para login
+          // Aqui usamos a senha armazenada no SecureStore para login
+          await loginWithPassword(acc.cpf_cnpj, savedCredentials?.password ?? '');
           router.replace('/(app)/home');
         }
       } else {
@@ -91,28 +104,25 @@ export default function Password() {
             <ActivityIndicator size="large" color={colors.primaryStart} />
           ) : acc ? (
             <>
-            
               <View style={{ marginBottom: spacing.lg, flexDirection: 'row', gap: 10, alignItems: 'center' }}>
                 <View style={styles.avatarWrap}>
-
                   <Image
                     source={{ uri: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face' }}
                     style={styles.avatar}
                   />
-
                 </View>
                 <View>
-                <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>{acc.name}</Text>
-                <Text style={{ color: colors.muted }}>
-                  CPF: ***.{acc.cpf_cnpj.slice(-9, -6)}.{acc.cpf_cnpj.slice(-6, -3)}-**
-                </Text>
+                  <Text style={{ fontSize: 18, fontWeight: '800', color: colors.text }}>{acc.name}</Text>
+                  <TextInput style={{ color: colors.muted }}>
+                    CPF: ***.{acc.cpf_cnpj.slice(-9, -6)}.{acc.cpf_cnpj.slice(-6, -3)}-**
+                  </TextInput>
                 </View>
               </View>
 
               <Text style={styles.label}>Senha</Text>
               <View style={styles.inputWrap}>
                 <TextInput
-                  value={pwd}
+                  value={pwd || savedCredentials?.password || ''} // Use senha salva se disponível
                   onChangeText={setPwd}
                   placeholder="••••••••"
                   placeholderTextColor={colors.muted}
@@ -142,7 +152,6 @@ export default function Password() {
                       style={{ width: 32, height: 32 }}
                       resizeMode="contain"
                     />
-
                     <Text style={{ color: '#9CA3AF', textAlign: 'center' }}>
                       Toque no sensor{'\n'}para entrar com sua biometria
                     </Text>

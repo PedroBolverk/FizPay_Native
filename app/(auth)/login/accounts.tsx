@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { colors, gradients, radius, spacing } from '@/theme/tokens';
@@ -7,7 +7,7 @@ import { listAccounts } from '@/db/accounts';
 import type { Account } from '@/db/types';
 import { AccountListCard } from '@/components/common/AccountListCard';
 import { Screen } from '@/components/layout/Screen';
-import Feather from '@expo/vector-icons/Feather';
+import Feather from '@expo/vector-icons/Feather'
 
 export default function AccountsScreen() {
   const router = useRouter();
@@ -41,16 +41,12 @@ export default function AccountsScreen() {
       {/* Header com gradiente */}
       <View style={styles.headerWrap}>
         <LinearGradient {...gradients.primary} style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Text style={{ color: '#fff' }}>
-              <Feather name="arrow-left" size={24} color="white" />
-            </Text>
-          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.back()}><Text style={{ color: '#fff' }}>{<Feather name="arrow-left" size={24} color="white" />}</Text></TouchableOpacity>
           <Text style={styles.headerTitle}>Login</Text>
         </LinearGradient>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}>
         {/* painel claro sobre o gradiente */}
         <View style={styles.panel}>
           <Text style={styles.h1}>Bem vindo</Text>
@@ -65,6 +61,11 @@ export default function AccountsScreen() {
               <Text style={{ color: colors.muted, textAlign: 'center', fontSize: 14 }}>
                 Parece que você ainda não cadastrou nenhuma conta.
               </Text>
+              <Image
+                source={require('../../../assets/images/Default_Account.png')}
+                style={{ width: 210.6, height: 194.6 }}
+                resizeMode="contain"
+              />
             </View>
           ) : (
             <AccountListCard
@@ -79,28 +80,30 @@ export default function AccountsScreen() {
             />
           )}
         </View>
-      </ScrollView>
 
-      {/* Footer with buttons */}
-      <View style={styles.footer}>
+        {/* CTA Entrar ou Cadastrar */}
         <TouchableOpacity
           onPress={() => {
             if (accounts.length === 0) {
+              // Redirecionar para o cadastro de conta
               router.push('/(auth)/login/connect-another');
             } else {
-              goToPassword();
+              // Redirecionar para o login com conta selecionada
+              goToPassword(); // Chama a função que já usa o parâmetro de id
             }
           }}
-          style={styles.btn}
+          style={[styles.btn]}
         >
-          <Text style={styles.btnText}>{accounts.length === 0 ? 'Cadastrar conta' : 'Entrar'}</Text>
+          <Text style={styles.btnText}>
+            {accounts.length === 0 ? 'Cadastrar conta' : 'Entrar'}
+          </Text>
         </TouchableOpacity>
 
         {/* Ajuda */}
-        <TouchableOpacity onPress={() => { /* abrir suporte */ }} style={{ marginTop: 12 }}>
-          <Text style={{ color: colors.primaryStart, fontWeight: '700', textAlign: 'center' }}>Preciso de ajuda</Text>
+        <TouchableOpacity onPress={() => { /* abrir suporte */ }} style={{ alignSelf: 'center', marginTop: 12 }}>
+          <Text style={{ color: colors.primaryStart, fontWeight: '700' }}>Preciso de ajuda</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </Screen>
   );
 }
@@ -112,31 +115,15 @@ const styles = StyleSheet.create({
 
   panel: {
     backgroundColor: '#ffffffff',
-    marginTop: -12,
     padding: spacing.lg,
   },
 
-  h1: { fontSize: 20, fontWeight: '700', color: colors.text, marginBottom: 4, textAlign: 'center', paddingTop: 20 },
+  h1: { fontSize: 20, fontWeight: '700', color: colors.text, marginBottom: 4, textAlign: 'center', paddingTop: 20, paddingBottom: 20 },
   sub: { color: colors.muted, marginBottom: spacing.md },
 
-  loading: { alignItems: 'center', paddingVertical: spacing.lg },
-  empty: { padding: spacing.lg, alignItems: 'center' },
-
-  // Scroll View container style
-  scrollContainer: {
-    flex: 1, // Take available space
-    paddingHorizontal: spacing.lg,
-    paddingBottom: 350, // Some extra space to prevent the footer from overlapping
-  },
-
-  // Footer styles
-  footer: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-    justifyContent: 'flex-end', // Ensures buttons are at the bottom
-    alignItems: 'center', // Center-align buttons
-  },
-
-  btn: { backgroundColor: colors.primaryStart, height: 52, paddingHorizontal: 100, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg },
+  btn: { backgroundColor: colors.primaryStart, height: 52, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', marginTop: 150 },
   btnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+
+  loading: { alignItems: 'center', paddingVertical: spacing.lg },
+  empty: {  alignItems: 'center' },
 });

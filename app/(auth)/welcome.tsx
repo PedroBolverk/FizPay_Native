@@ -45,7 +45,7 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between', // Esta propriedade vai empurrar o conteúdo para preencher o espaço disponível
+    justifyContent: 'space-between',
   },
   h1: {
     fontSize: 18,
@@ -81,6 +81,6 @@ const styles = StyleSheet.create({
     gap: 40,
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: spacing.lg, // Certifica-se de que o espaço na parte inferior é adequado
+    marginBottom: spacing.lg, 
   },
 });

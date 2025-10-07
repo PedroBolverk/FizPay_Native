@@ -13,7 +13,6 @@ export default function QR() {
   const [scanned, setScanned] = React.useState(false);
   const [data, setData] = React.useState<string | null>(null);
 
-  // Estado inicial: pedindo permissão
   if (!permission) {
     return (
       <Screen>
@@ -99,7 +98,7 @@ export default function QR() {
                   <TouchableOpacity style={[styles.btn, { flex: 1 }]} onPress={() => setScanned(false)}>
                     <Text style={styles.btnText}>Ler novamente</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.btnGhost, { flex: 1 }]} onPress={() => { /* navegar/usar dado */ }}>
+                  <TouchableOpacity style={[styles.btnGhost, { flex: 1 }]} onPress={() => { /*  */ }}>
                     <Text style={styles.btnGhostText}>Usar dado</Text>
                   </TouchableOpacity>
                 </View>
@@ -109,7 +108,6 @@ export default function QR() {
             )}
           </View>
 
-          {/* Botão fixo no rodapé */}
           <View style={styles.footer}>
             <TouchableOpacity style={styles.btn} onPress={() => { /* Lógica de usar QR code ou realizar algum pagamento */ }}>
               <Text style={styles.btnText}>Finalizar</Text>

@@ -1,4 +1,3 @@
-// src/db/index.ts
 import * as SQLite from 'expo-sqlite';
 
 export const db = SQLite.openDatabaseSync('fizpay_v2.db');
@@ -62,16 +61,12 @@ export function bootstrapDbSync() {
   }
 }
 
-/** =========================================================
- *  SEED DE DEMONSTRAÇÃO — EDITE AQUI seus "mocks"
- *  =======================================================*/
 export function seedDemoDataSync() {
   const count =
     db.getFirstSync<{ count: number }>(
       'SELECT COUNT(*) AS count FROM transactions'
     )?.count ?? 0;
 
-  // Só popula se estiver vazio (para não duplicar)
   if (count > 0) return;
 
   const now = Date.now();
@@ -96,7 +91,6 @@ export function seedDemoDataSync() {
   db.withTransactionSync(() => {
     for (const row of txs) insert.executeSync(row as any);
 
-    // Usuário demo (edite aqui também)
     db.runSync(
       'INSERT OR REPLACE INTO users (id,name,email,avatar) VALUES (?,?,?,?)',
       [
@@ -111,14 +105,11 @@ export function seedDemoDataSync() {
   insert.finalizeSync();
 }
 
-/** =========================================================
- *  DEV ONLY: resetar e reaplicar seed rapidamente
- *  =======================================================*/
 export function resetAndSeedSync() {
   db.withTransactionSync(() => {
     db.execSync('DELETE FROM transactions;');
     db.execSync('DELETE FROM users;');
-    db.execSync('DELETE FROM sessions;');  // Limpa as sessões
+    db.execSync('DELETE FROM sessions;');
   });
   seedDemoDataSync();
 }

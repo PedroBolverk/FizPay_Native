@@ -4,11 +4,16 @@ import { View, ActivityIndicator } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 import { colors } from '@/theme/tokens';
 import { bootstrapDbSync } from '@/db';
+import bcrypt from 'react-native-bcrypt';
 
 export default function Index() {
   useEffect(() => {
-    bootstrapDbSync();  // Inicializa o banco de dados
+    bootstrapDbSync();
   }, []);
+ 
+
+
+
   const { user, loading } = useAuth();
 
   if (loading) {

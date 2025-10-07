@@ -8,10 +8,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, loading, signOut } = useAuth(); // Acesso ao contexto de autenticação
+  const { user, loading, signOut } = useAuth(); 
 
   if (loading) {
-    // Display a loading indicator if the user data is still being fetched
+
     return (
       <Screen scroll>
         <View style={styles.loadingContainer}>
@@ -22,10 +22,9 @@ export default function ProfileScreen() {
     );
   }
 
-  // Função para efetuar o logout e redirecionar para a tela de Welcome
+
   const onSubmit = async () => {
-    // Chama a função de sign out
-    router.push('/(auth)/welcome'); // Redireciona para a tela de welcome
+    router.push('/(auth)/welcome');
   };
 
   return (
@@ -68,7 +67,7 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={onSubmit} // Chama o handleSignOut no click
+          onPress={onSubmit}
         >
           <Text style={styles.actionText}>Sair</Text>
         </TouchableOpacity>
@@ -77,7 +76,6 @@ export default function ProfileScreen() {
   );
 }
 
-// Estilos
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
