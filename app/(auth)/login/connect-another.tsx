@@ -4,6 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { colors, gradients, radius, spacing } from '@/theme/tokens';
 import { upsertAccount } from '@/db/accounts';
+import { Screen } from '@/components/layout/Screen';
+import Feather from '@expo/vector-icons/Feather';
 
 export default function ConnectAnother() {
   const router = useRouter();
@@ -23,57 +25,57 @@ export default function ConnectAnother() {
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      {/* Header com gradiente */}
-      <View style={styles.headerWrap}>
-        <LinearGradient {...gradients.primary} style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Text style={{ color: '#fff' }}>{'< Voltar'}</Text>
+    <Screen scroll>
+      <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <View style={styles.headerWrap}>
+          <LinearGradient {...gradients.primary} style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()}><Text style={{ color: '#fff' }}>{<Feather name="arrow-left" size={24} color="white" />}</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Conectar-se a outra conta</Text>
+          </LinearGradient>
+        </View>
+
+        <View style={styles.panel}>
+          <Text style={styles.label}>CPF ou CNPJ</Text>
+          <TextInput
+            value={cpf}
+            onChangeText={setCpf}
+            keyboardType="numeric"
+            placeholder="000.000.000-00"
+            placeholderTextColor={colors.muted}
+            style={styles.input}
+          />
+
+          <Text style={styles.label}>Como deseja ser chamado</Text>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="Seu nome"
+            placeholderTextColor={colors.muted}
+            style={styles.input}
+          />
+
+          <Text style={styles.label}>Senha (opcional)</Text>
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+            placeholderTextColor={colors.muted}
+            secureTextEntry
+            style={styles.input}
+          />
+
+          <TouchableOpacity
+            disabled={!canSave}
+            onPress={handleSave}
+            style={[styles.btn, { opacity: canSave ? 1 : 0.4 }]}
+          >
+            <Text style={styles.btnText}>Salvar</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Conectar-se a outra conta</Text>
-        </LinearGradient>
-      </View>
-
-      <View style={styles.panel}>
-        <Text style={styles.label}>CPF ou CNPJ</Text>
-        <TextInput
-          value={cpf}
-          onChangeText={setCpf}
-          keyboardType="numeric"
-          placeholder="000.000.000-00"
-          placeholderTextColor={colors.muted}
-          style={styles.input}
-        />
-
-        <Text style={styles.label}>Como deseja ser chamado</Text>
-        <TextInput
-          value={name}
-          onChangeText={setName}
-          placeholder="Seu nome"
-          placeholderTextColor={colors.muted}
-          style={styles.input}
-        />
-
-        <Text style={styles.label}>Senha (opcional)</Text>
-        <TextInput
-          value={password}
-          onChangeText={setPassword}
-          placeholder="••••••••"
-          placeholderTextColor={colors.muted}
-          secureTextEntry
-          style={styles.input}
-        />
-
-        <TouchableOpacity
-          disabled={!canSave}
-          onPress={handleSave}
-          style={[styles.btn, { opacity: canSave ? 1 : 0.4 }]}
-        >
-          <Text style={styles.btnText}>Salvar</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+        </View>
+      </KeyboardAvoidingView>
+    </Screen>
   );
 }
 

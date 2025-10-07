@@ -1,94 +1,76 @@
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ImageBackground,
+  View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { QrCode, Eye, ArrowUpRight, CreditCard } from 'lucide-react-native';
 import { Screen } from '@/components/layout/Screen';
 import { colors, spacing, radius, gradients } from '@/theme/tokens';
 import { useAuth } from '@/context/AuthContext';
-import { TransactionsSection } from '../../src/components/transactions/TransactionsSection';
-
+import { TransactionsSection } from '@/components/transactions/TransactionsSection';
+import { listRecentSync } from '@/features/transactions/repo';
+import type { Transaction } from '@/features/transactions/types';
+import { useHiddenBalance } from '@/hooks/useHiddenBalance';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 export default function Home() {
+  const router = useRouter();
   const { user } = useAuth();
-  const [showBalance, setShowBalance] = React.useState(true);
+  const { show, toggle, ready } = useHiddenBalance(true);
+  const [recentTx, setRecentTx] = React.useState<Transaction[]>([]);
 
-  const formatBalance = (value: number) =>
-    value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 3 });
+  // Sempre que a Home ganha foco, lê os 5 mais recentes do SQLite
+  useFocusEffect(
+    React.useCallback(() => {
+      setRecentTx(listRecentSync(5));
+    }, [])
+  );
+
+  const formatBRL = (v: number) =>
+    v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
 
   return (
     <Screen scroll>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <View style={styles.logoOuter}>
-            <View style={styles.logoInner} />
-          </View>
-          <Text style={styles.hello}>
-            Olá, {user?.name ?? 'Rafael Lucas'}
-          </Text>
+          <View style={styles.logoOuter}><View style={styles.logoInner} /></View>
+          <Text style={styles.hello}>Olá, {user?.name ?? 'Rafael Lucas'}</Text>
         </View>
-
         <View style={styles.headerRight}>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => {/* navegar para QR */}}>
+          <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(app)/qr')}>
             <QrCode size={20} color={colors.primaryStart} />
           </TouchableOpacity>
           <View style={styles.avatarWrap}>
-            <Image
-              source={{ uri: user?.avatar ?? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face' }}
-              style={styles.avatar}
-            />
+            <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(app)/profile')}>
+              <Image
+                source={{ uri: user?.avatar ?? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face' }}
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
 
       <View style={{ paddingHorizontal: spacing.lg, gap: spacing.lg }}>
-        {/* Balance cards */}
         <View style={styles.grid2}>
-          <BalanceCard
-            title="SALDO PIX"
-            value={showBalance ? formatBalance(25454) : '••••••'}
-            onToggle={() => setShowBalance(v => !v)}
-          />
-          <BalanceCard
-            title="SALDO DE CASHBACK"
-            value={showBalance ? formatBalance(23454) : '••••••'}
-            onToggle={() => setShowBalance(v => !v)}
-          />
+          <BalanceCard title="SEU SALDO" value={ready && show ? formatBRL(25454) : '••••••'} onToggle={toggle} />
+          <BalanceCard title="SALDO DE CASHBACK" value={ready && show ? formatBRL(23454) : '••••••'} onToggle={toggle} />
         </View>
 
-        {/* Quick Actions */}
+        {/* Ações rápidas */}
         <View>
           <Text style={styles.sectionTitle}>O que deseja fazer hoje?</Text>
           <View style={styles.grid3}>
-            <ActionCard
-              title="Pagar"
-              icon={<QrCode size={24} color={colors.muted} />}
-              onPress={() => {/* navegar para QR */}}
-            />
-            <ActionCard
-              title="Transferir"
-              icon={<ArrowUpRight size={24} color={colors.muted} />}
-              onPress={() => {/* navegar para Transferir */}}
-            />
-            <ActionCard
-              title="Meus Cartões"
-              icon={<CreditCard size={24} color={colors.muted} />}
-              onPress={() => {/* navegar para Cartões */}}
-            />
+            <ActionCard title="Pagar" icon={<QrCode size={24} color={colors.muted} />} onPress={() => router.push('/(app)/qr')} />
+            <ActionCard title="Transferir" icon={<ArrowUpRight size={24} color={colors.muted} />} onPress={() => {/* navegação futura */ }} />
+            <ActionCard title="Meus Cartões" icon={<CreditCard size={24} color={colors.muted} />} onPress={() => {/* navegação futura */ }} />
           </View>
         </View>
 
-        {/* Featured */}
+        {/* Destaque */}
         <View>
           <Text style={styles.sectionTitle}>Em destaque</Text>
-
           <View style={styles.featuredCard}>
             <ImageBackground
               source={{ uri: 'https://images.unsplash.com/photo-1565619489205-42adf91ff3a4?auto=format&fit=crop&w=1080&q=60' }}
@@ -102,36 +84,26 @@ export default function Home() {
                 style={StyleSheet.absoluteFill}
               />
               <View style={styles.featuredLeft}>
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>AVISTÃO</Text>
-                </View>
-                <Text style={styles.featuredText}>
-                  Acesse as promoções{'\n'}do supermercado
-                </Text>
+                <View style={styles.badge}><Text style={styles.badgeText}>AVISTÃO</Text></View>
+                <Text style={styles.featuredText}>Acesse as promoções{'\n'}do supermercado</Text>
               </View>
               <View style={styles.featuredRight}>
                 <TouchableOpacity style={styles.inviteBtn}>
-                  <Text style={styles.inviteBtnText}>
-                    Convidar{'\n'}para o FizPay
-                  </Text>
+                  <Text style={styles.inviteBtnText}>Convidar{'\n'}para o FizPay</Text>
                 </TouchableOpacity>
               </View>
             </ImageBackground>
           </View>
         </View>
-
-        {/* Transactions (extraída para componente) */}
         <TransactionsSection
           title="Transações"
-          onSeeAll={() => {/* navegar para Extrato */}}
-          // data={[]} // quando tiver dados reais, passe aqui
+          data={recentTx}
+          onSeeAll={() => router.push('/(app)/statement-list')}
         />
       </View>
     </Screen>
   );
 }
-
-/** ---------- Subcomponents ---------- */
 
 function BalanceCard({
   title,
@@ -144,29 +116,27 @@ function BalanceCard({
 }) {
   return (
     <LinearGradient {...gradients.primary} style={styles.balanceCard}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+      {/* Decoração */}
+      <View pointerEvents="none" style={StyleSheet.absoluteFillObject}>
+        <View style={styles.circleTop} />
+        <View style={styles.circleBottom} />
+      </View>
+
+      <View style={styles.balanceHeaderRow}>
         <Text style={styles.balanceTitle}>{title}</Text>
-        <TouchableOpacity onPress={onToggle}>
+        <TouchableOpacity onPress={onToggle} hitSlop={8} style={styles.eyeBtn}>
           <Eye size={16} color={colors.primaryTextOn} />
         </TouchableOpacity>
       </View>
+
       <Text style={styles.balanceValue}>{value}</Text>
-      {/* círculos decorativos */}
-      <View style={styles.circleTop} />
-      <View style={styles.circleBottom} />
     </LinearGradient>
   );
 }
 
 function ActionCard({
-  title,
-  icon,
-  onPress,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  onPress: () => void;
-}) {
+  title, icon, onPress,
+}: { title: string; icon: React.ReactNode; onPress: () => void }) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.actionCard} activeOpacity={0.7}>
       <View style={styles.actionIconWrap}>{icon}</View>
@@ -175,13 +145,12 @@ function ActionCard({
   );
 }
 
-/** ---------- styles ---------- */
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: colors.surface,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -189,15 +158,11 @@ const styles = StyleSheet.create({
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   hello: { color: colors.text, fontWeight: '600' },
-
   logoOuter: {
-    width: 24, height: 24, borderRadius: 6, backgroundColor: colors.primaryStart,
-    alignItems: 'center', justifyContent: 'center',
+    width: 24, height: 24, borderRadius: 6,
+    backgroundColor: colors.primaryStart, alignItems: 'center', justifyContent: 'center',
   },
-  logoInner: {
-    width: 12, height: 12, borderRadius: 3, backgroundColor: '#fff', transform: [{ rotate: '45deg' }],
-  },
-
+  logoInner: { width: 12, height: 12, borderRadius: 3, backgroundColor: '#fff', transform: [{ rotate: '45deg' }] },
   iconBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   avatarWrap: { width: 32, height: 32, borderRadius: 16, overflow: 'hidden', backgroundColor: '#e5e7eb' },
   avatar: { width: '100%', height: '100%' },
@@ -205,40 +170,22 @@ const styles = StyleSheet.create({
   grid2: { flexDirection: 'row', gap: spacing.md },
   grid3: { flexDirection: 'row', gap: spacing.md },
 
-  balanceCard: {
-    flex: 1,
-    borderRadius: radius.xl,
-    padding: spacing.md,
-    overflow: 'hidden',
-  },
+  balanceCard: { flex: 1, borderRadius: radius.xl, padding: spacing.md, overflow: 'hidden' },
+  balanceHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   balanceTitle: { color: colors.primaryTextOn, fontSize: 12, fontWeight: '600' },
   balanceValue: { color: colors.primaryTextOn, fontSize: 18, fontWeight: '800' },
-  circleTop: {
-    position: 'absolute', top: -16, right: -16, width: 64, height: 64, borderRadius: 32,
-    backgroundColor: 'rgba(255,255,255,0.10)',
-  },
-  circleBottom: {
-    position: 'absolute', bottom: -10, left: -10, width: 48, height: 48, borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.10)',
-  },
+  circleTop: { position: 'absolute', top: -16, right: -16, width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,255,255,0.10)' },
+  circleBottom: { position: 'absolute', bottom: -10, left: -10, width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.10)' },
+  eyeBtn: { padding: 4 },
 
   sectionTitle: { color: colors.text, fontWeight: '800', marginBottom: spacing.md },
 
   actionCard: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
+    flex: 1, backgroundColor: colors.surface, borderRadius: radius.lg,
+    paddingVertical: spacing.lg, alignItems: 'center', justifyContent: 'center', gap: 8,
+    borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border,
   },
-  actionIconWrap: {
-    width: 48, height: 48, borderRadius: radius.lg, backgroundColor: '#EEF2F7',
-    alignItems: 'center', justifyContent: 'center',
-  },
+  actionIconWrap: { width: 48, height: 48, borderRadius: radius.lg, backgroundColor: '#EEF2F7', alignItems: 'center', justifyContent: 'center' },
   actionLabel: { color: colors.text, fontWeight: '600' },
 
   featuredCard: { borderRadius: radius.lg, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
@@ -248,7 +195,6 @@ const styles = StyleSheet.create({
   badge: { backgroundColor: '#ef4444', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, alignSelf: 'flex-start' },
   badgeText: { color: '#fff', fontWeight: '800', fontSize: 12 },
   featuredText: { color: '#fff', marginTop: 6, fontSize: 12 },
-
   inviteBtn: { backgroundColor: colors.surface, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
   inviteBtnText: { color: colors.text, fontWeight: '700', fontSize: 12 },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { colors, gradients, radius, spacing } from '@/theme/tokens';
@@ -41,7 +41,7 @@ export default function AccountsScreen() {
       {/* Header com gradiente */}
       <View style={styles.headerWrap}>
         <LinearGradient {...gradients.primary} style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}><Text style={{ color: '#fff'}}>{<Feather name="arrow-left" size={24} color="white" />}</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => router.back()}><Text style={{ color: '#fff' }}>{<Feather name="arrow-left" size={24} color="white" />}</Text></TouchableOpacity>
           <Text style={styles.headerTitle}>Login</Text>
         </LinearGradient>
       </View>
@@ -49,8 +49,7 @@ export default function AccountsScreen() {
       <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}>
         {/* painel claro sobre o gradiente */}
         <View style={styles.panel}>
-          <Text style={styles.h1}>Bem vindo de volta 👋</Text>
-          <Text style={styles.sub}>Olá, faça login para continuar!</Text>
+          <Text style={styles.h1}>Bem vindo</Text>
 
           {loading ? (
             <View style={styles.loading}>
@@ -59,9 +58,14 @@ export default function AccountsScreen() {
             </View>
           ) : accounts.length === 0 ? (
             <View style={styles.empty}>
-              <Text style={{ color: colors.muted, textAlign: 'center' }}>
-                Nenhuma conta encontrada.{'\n'}Toque abaixo para adicionar.
+              <Text style={{ color: colors.muted, textAlign: 'center', fontSize: 14 }}>
+                Parece que você ainda não cadastrou nenhuma conta.
               </Text>
+              <Image
+                source={require('../../../assets/images/Default_Account.png')}
+                style={{ width: 210.6, height: 194.6 }}
+                resizeMode="contain"
+              />
             </View>
           ) : (
             <AccountListCard
@@ -77,13 +81,22 @@ export default function AccountsScreen() {
           )}
         </View>
 
-        {/* CTA Entrar */}
+        {/* CTA Entrar ou Cadastrar */}
         <TouchableOpacity
-          disabled={!selected}
-          onPress={goToPassword}
-          style={[styles.btn, { opacity: selected ? 1 : 0.4 }]}
+          onPress={() => {
+            if (accounts.length === 0) {
+              // Redirecionar para o cadastro de conta
+              router.push('/(auth)/login/connect-another');
+            } else {
+              // Redirecionar para o login com conta selecionada
+              goToPassword(); // Chama a função que já usa o parâmetro de id
+            }
+          }}
+          style={[styles.btn]}
         >
-          <Text style={styles.btnText}>Entrar</Text>
+          <Text style={styles.btnText}>
+            {accounts.length === 0 ? 'Cadastrar conta' : 'Entrar'}
+          </Text>
         </TouchableOpacity>
 
         {/* Ajuda */}
@@ -101,24 +114,16 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#fff', fontSize: 22, fontWeight: '800', marginTop: 8 },
 
   panel: {
-    backgroundColor: '#fff',
-    marginTop: -12,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
+    backgroundColor: '#ffffffff',
     padding: spacing.lg,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: -2 },
   },
 
-  h1: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 4 },
+  h1: { fontSize: 20, fontWeight: '700', color: colors.text, marginBottom: 4, textAlign: 'center', paddingTop: 20, paddingBottom: 20 },
   sub: { color: colors.muted, marginBottom: spacing.md },
 
-  btn: { backgroundColor: colors.primaryStart, height: 52, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg },
+  btn: { backgroundColor: colors.primaryStart, height: 52, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', marginTop: 150 },
   btnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
 
   loading: { alignItems: 'center', paddingVertical: spacing.lg },
-  empty: { backgroundColor: '#F3F4F6', borderRadius: radius.lg, padding: spacing.lg, alignItems: 'center' },
+  empty: {  alignItems: 'center' },
 });

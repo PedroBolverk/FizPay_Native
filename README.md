@@ -63,4 +63,5 @@ Todas as transações, contas e dados de cashback são mockados para fins de dem
 
 A API externa ainda não foi integrada, mas existe uma classe pronta para ser utilizada.
 
+
 A aplicação segue boas práticas de React Native e TypeScript, com tipagem forte e componentes reutilizáveis.
