@@ -1,50 +1,66 @@
-# Welcome to your Expo app 👋
+-- FizPay Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicação mobile de carteira digital desenvolvida em React Native (Expo), seguindo o design do Figma e utilizando SQLite para mock de dados e AsyncStorage para estados globais.
 
-## Get started
+Pré-requisitos
 
-1. Install dependencies
+Antes de iniciar, você precisa ter os seguintes itens instalados no seu ambiente de desenvolvimento: Node.js (versão 17 ou superior), npm ou yarn, e Expo CLI globalmente. Se o Expo CLI não estiver instalado, instale-o com npm install -g expo-cli ou yarn global add expo-cli. Além disso, você precisará de um Emulador Android ou iOS, ou um dispositivo físico com o aplicativo Expo Go instalado.
 
-   ```bash
-   npm install
-   ```
+Instalação
 
-2. Start the app
+Primeiro, clone o repositório com o comando git clone https://github.com/PedroBolverk/FizPay_Native.git, e então acesse a pasta cd FizPay_Native. Após isso, instale as dependências do projeto utilizando npm install ou yarn install, conforme sua preferência e para rodar o projeto npx expo start.
 
-   ```bash
-   npx expo start
-   ```
+Teclas: a (para rodar no emulador android)
+Para IOS ou demais dispositivos físicos: (Escanear o QR Code com o expo go instalado no aparelho)
 
-In the output, you'll find options to open the app in a
+Caso haja problemas com o cache ou dependências nativas, execute os comandos expo doctor e expo install para limpar o cache e garantir que tudo esteja instalado corretamente.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Configuração do Banco de Dados
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+O banco de dados SQLite será criado automaticamente na primeira execução do aplicativo, com dados mock de demonstração. Não será necessário criar tabelas manualmente. Se em algum momento durante o desenvolvimento você precisar reiniciar o banco de dados, execute o código import { resetAndSeedSync } from './src/db/index'; resetAndSeedSync(); para limpar todas as tabelas e aplicar novamente os dados mock.
 
-## Get a fresh project
+Executando o Aplicativo
 
-When you're ready, run:
+Se você estiver utilizando um emulador Android, execute npx expo start, o que abrirá a interface do Expo onde você pode iniciar o aplicativo no emulador. Caso queira testar em um dispositivo físico Android ou iOS, basta abrir o aplicativo Expo Go no seu celular e escanear o QR code exibido no terminal após rodar o comando expo start.
 
-```bash
-npm run reset-project
-```
+Funcionalidades Implementadas
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+O aplicativo possui as funcionalidades seguintes:
 
-## Learn more
+Telas conforme o design do Figma.
 
-To learn more about developing your project with Expo, look at the following resources:
+Login e cadastro de contas, utilizando dados mock armazenados no SQLite.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Armazenamento de estados globais através do AsyncStorage.
 
-## Join the community
+Mock de transações e cashback.
 
-Join our community of developers creating universal apps.
+Rotas dinâmicas implementadas com expo-router.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Suporte à autenticação biométrica (FaceID / Fingerprint), utilizando Expo LocalAuthentication.
+
+Estrutura do Projeto
+
+A estrutura do projeto é organizada da seguinte maneira:
+
+/src contém os arquivos principais da aplicação.
+
+/components: Componentes reutilizáveis em várias partes do aplicativo.
+
+/context: Gerenciamento de estados globais com contextos.
+
+/db: Banco de dados SQLite.
+
+/screens: Telas do aplicativo.
+
+/theme: Tokens de cores, espaçamentos e raios de borda.
+
+/assets: Contém imagens e ícones utilizados no aplicativo.
+
+Observações
+
+Todas as transações, contas e dados de cashback são mockados para fins de demonstração.
+
+A API externa ainda não foi integrada, mas existe uma classe pronta para ser utilizada.
+
+A aplicação segue boas práticas de React Native e TypeScript, com tipagem forte e componentes reutilizáveis.
