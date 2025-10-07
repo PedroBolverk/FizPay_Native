@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+       "infoPlist": { "NSCameraUsageDescription": "Precisamos da câmera para ler QR Codes." }
     },
     "android": {
       "adaptiveIcon": {
