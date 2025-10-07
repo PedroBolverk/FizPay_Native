@@ -1,4 +1,5 @@
 import { dbReady, first, run, onlyDigits } from './client';
+import { all } from './client';
 import type { Account, Session } from './types';
 import { getAccountById } from './accounts';
 import * as SecureStore from 'expo-secure-store'; // Importando expo-secure-store para armazenar credenciais
@@ -39,7 +40,7 @@ export async function createSession(accountId: number): Promise<Session> {
 // Listar todas as sessões
 export async function listSessions(): Promise<Session[]> {
   await dbReady();
-  return (await import('./client')).all<Session>(
+  return all<Session>(
     `SELECT * FROM sessions ORDER BY created_at DESC;`
   );
 }
