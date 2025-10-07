@@ -126,7 +126,7 @@ export default function StatementScreen() {
   );
 }
 
-/** ---------- Row da transação com animação ---------- */
+/** Row da transação com animação  **/
 function TxRow({ tx, onPress }: { tx: Transaction; onPress?: () => void }) {
   const { Icon, bubble, signColor } = getVisual(tx);
   const isIn = tx.amount >= 0;
@@ -186,7 +186,7 @@ function TxRow({ tx, onPress }: { tx: Transaction; onPress?: () => void }) {
   );
 }
 
-/** ---------- Helpers de visual ---------- */
+/** Helpers de visual  */
 function getVisual(tx: Transaction) {
   const isIn = tx.amount >= 0;
   const green = '#10B981';
@@ -228,7 +228,7 @@ function getVisual(tx: Transaction) {
   return { Icon, bubble, signColor };
 }
 
-/** ---------- Helpers de dados ---------- */
+/** Helpers de dados  */
 function filterByPeriod(list: Transaction[], key: PeriodKey) {
   const now = new Date();
   const start = new Date(now);
@@ -238,8 +238,8 @@ function filterByPeriod(list: Transaction[], key: PeriodKey) {
       start.setHours(0, 0, 0, 0);
       break;
     case 'week': {
-      const day = now.getDay(); // 0 dom
-      const diff = (day + 6) % 7; // segunda como início
+      const day = now.getDay(); 
+      const diff = (day + 6) % 7; 
       start.setDate(now.getDate() - diff);
       start.setHours(0, 0, 0, 0);
       break;
@@ -288,7 +288,6 @@ function toSections(list: Transaction[]) {
   return sections;
 }
 
-/** ---------- styles ---------- */
 const styles = StyleSheet.create({
   header: {
     paddingHorizontal: spacing.lg,

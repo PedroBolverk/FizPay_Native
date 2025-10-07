@@ -9,8 +9,11 @@ export const colors = {
   success: '#16A34A',
   danger: '#EF4444',
   primaryStart: '#04BF7B',
-  primaryEnd:   '#0396A6',
+  primaryEnd: '#0396A6',
   primaryTextOn: '#FFFFFF',
+  secondary: '#3B82F6',
+  accent: '#F59E0B',
+  destructive: '#DC2626',
 };
 export const gradients = {
   primary: {

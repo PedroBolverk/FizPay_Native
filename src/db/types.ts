@@ -1,6 +1,7 @@
 export type Account = {
   id: number;
   name: string;
+  email?: string | null;
   cpf_cnpj: string;           // salve sem máscara (apenas dígitos)
   avatar?: string | null;
   password?: string | null;   // DEMO: em produção, use hash + salt

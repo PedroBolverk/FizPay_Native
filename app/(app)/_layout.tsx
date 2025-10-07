@@ -8,7 +8,6 @@ import { Home, List, BadgePercent, User } from 'lucide-react-native';
 export default function AppTabsLayout() {
   const insets = useSafeAreaInsets();
 
-  // Se quiser deixar sem altura fixa, REMOVA a linha "height".
   return (
     <Tabs
       screenOptions={{
@@ -23,8 +22,7 @@ export default function AppTabsLayout() {
           borderTopWidth: StyleSheet.hairlineWidth,
           paddingTop: 6,
           paddingBottom: Math.max(insets.bottom, 8),
-          height: 56 + insets.bottom, // <- opção A (com altura calculada)
-          // opção B (recomendada): comente a linha acima e deixe sem 'height'
+          height: 56 + insets.bottom, 
         },
       }}
     >
