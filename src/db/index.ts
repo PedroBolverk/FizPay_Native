@@ -4,15 +4,21 @@ import * as SQLite from 'expo-sqlite';
 export const db = SQLite.openDatabaseSync('fizpay_v2.db');
 
 export function bootstrapDbSync() {
+  console.log('Iniciando a configuração do banco de dados...');
+  
   // PRAGMAs básicos
   db.execSync('PRAGMA journal_mode = WAL;');
 
   // Lê versão do schema
   const row = db.getFirstSync<{ user_version: number }>('PRAGMA user_version;');
   const v = row?.user_version ?? 0;
+  console.log(`Versão do schema: ${v}`);
 
   if (v < 1) {
-    // Tabelas
+    // Criação das tabelas
+    console.log('Criando as tabelas...');
+
+    
     db.execSync(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
@@ -34,6 +40,16 @@ export function bootstrapDbSync() {
       );
     `);
 
+    // Criação da tabela sessions
+    console.log('Criando a tabela de sessões...');
+    db.execSync(`
+      CREATE TABLE IF NOT EXISTS sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      );
+    `);
+
     // Índice útil para ordenação por data (opcional, mas recomendado)
     db.execSync(`CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date DESC);`);
 
@@ -42,6 +58,7 @@ export function bootstrapDbSync() {
 
     // Marca versão de schema
     db.execSync('PRAGMA user_version = 1;');
+    console.log('Banco de dados configurado com sucesso!');
   }
 }
 
@@ -70,7 +87,6 @@ export function seedDemoDataSync() {
     ['t6','PIX Recebido','De: Vitoria Oliveira',           75.00,  now - 4*day, 'completed','pix'],
     ['t7','PIX Recebido','De: Jose Oliveira',             175.00,  now - 5*day, 'completed','pix'],
     ['t8','PIX Recebido','De: Pedro Oliveira',            275.00,  now - 0*day, 'completed','pix'],
-    // ➕ adicione/edite linhas à vontade
   ];
 
   const insert = db.prepareSync(
@@ -102,6 +118,7 @@ export function resetAndSeedSync() {
   db.withTransactionSync(() => {
     db.execSync('DELETE FROM transactions;');
     db.execSync('DELETE FROM users;');
+    db.execSync('DELETE FROM sessions;');  // Limpa as sessões
   });
   seedDemoDataSync();
 }

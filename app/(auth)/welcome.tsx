@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 export default function Welcome() {
   const router = useRouter();
   return (
-    <Screen>
+    <Screen style={styles.container}>
       <View style={{ padding: spacing.lg }}>
         <Image
           source={require('../../assets/images/logo.png')}
@@ -29,7 +29,8 @@ export default function Welcome() {
         <Text style={styles.subtitle}>Acesse sua conta e aproveite todos os benefícios do FizPay.</Text>
       </View>
 
-      <View style={{ padding: spacing.lg, gap: 85, flexDirection: 'row', justifyContent: 'center' }}>
+      {/* Alinhar os botões no rodapé */}
+      <View style={styles.footer}>
         <TouchableOpacity style={styles.cta} onPress={() => router.push('/(auth)/login/accounts')}>
           <Text style={styles.ctaText}>Entrar</Text>
         </TouchableOpacity>
@@ -42,11 +43,44 @@ export default function Welcome() {
 }
 
 const styles = StyleSheet.create({
-  h1: { fontSize: 18, fontWeight: '800', color: colors.text, textAlign: 'center', marginBottom: 8 },
-  subtitle: { color: colors.muted, textAlign: 'center' },
-  cta: { backgroundColor: colors.primaryStart, borderRadius: radius.lg, height: 53, width: 152, alignItems: 'center', justifyContent: 'center' },
-  ctaText: { color: '#fff', fontWeight: '700' },
-  ctaOutline: { height: 52, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
-  logoOuter: { width: 36, height: 36, borderRadius: 8, backgroundColor: colors.primaryStart, alignItems: 'center', justifyContent: 'center' },
-  logoInner: { width: 20, height: 20, borderRadius: 4, backgroundColor: '#fff', transform: [{ rotate: '45deg' }] },
+  container: {
+    flex: 1,
+    justifyContent: 'space-between', // Esta propriedade vai empurrar o conteúdo para preencher o espaço disponível
+  },
+  h1: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: colors.muted,
+    textAlign: 'center',
+  },
+  cta: {
+    backgroundColor: colors.primaryStart,
+    borderRadius: radius.lg,
+    height: 53,
+    width: 152,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ctaText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+  ctaOutline: {
+    height: 52,
+    borderRadius: radius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  footer: {
+    padding: spacing.lg,
+    gap: 40,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: spacing.lg, // Certifica-se de que o espaço na parte inferior é adequado
+  },
 });

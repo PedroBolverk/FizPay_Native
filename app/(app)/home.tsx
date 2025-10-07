@@ -42,18 +42,19 @@ export default function Home() {
             <QrCode size={20} color={colors.primaryStart} />
           </TouchableOpacity>
           <View style={styles.avatarWrap}>
-            <Image
-              source={{ uri: user?.avatar ?? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face' }}
-              style={styles.avatar}
-            />
+            <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(app)/profile')}>
+              <Image
+                source={{ uri: user?.avatar ?? 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face' }}
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
 
       <View style={{ paddingHorizontal: spacing.lg, gap: spacing.lg }}>
-        {/* Balances */}
         <View style={styles.grid2}>
-          <BalanceCard title="SALDO PIX" value={ready && show ? formatBRL(25454) : '••••••'} onToggle={toggle} />
+          <BalanceCard title="SEU SALDO" value={ready && show ? formatBRL(25454) : '••••••'} onToggle={toggle} />
           <BalanceCard title="SALDO DE CASHBACK" value={ready && show ? formatBRL(23454) : '••••••'} onToggle={toggle} />
         </View>
 
@@ -62,8 +63,8 @@ export default function Home() {
           <Text style={styles.sectionTitle}>O que deseja fazer hoje?</Text>
           <View style={styles.grid3}>
             <ActionCard title="Pagar" icon={<QrCode size={24} color={colors.muted} />} onPress={() => router.push('/(app)/qr')} />
-            <ActionCard title="Transferir" icon={<ArrowUpRight size={24} color={colors.muted} />} onPress={() => {/* navegação futura */}} />
-            <ActionCard title="Meus Cartões" icon={<CreditCard size={24} color={colors.muted} />} onPress={() => {/* navegação futura */}} />
+            <ActionCard title="Transferir" icon={<ArrowUpRight size={24} color={colors.muted} />} onPress={() => {/* navegação futura */ }} />
+            <ActionCard title="Meus Cartões" icon={<CreditCard size={24} color={colors.muted} />} onPress={() => {/* navegação futura */ }} />
           </View>
         </View>
 
@@ -94,12 +95,10 @@ export default function Home() {
             </ImageBackground>
           </View>
         </View>
-
-        {/* Transações (5 últimas do SQLite) */}
         <TransactionsSection
           title="Transações"
           data={recentTx}
-          onSeeAll={() => router.push('/(app)/statement')}
+          onSeeAll={() => router.push('/(app)/statement-list')}
         />
       </View>
     </Screen>
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
-    backgroundColor: colors.surface, // use surface para evitar chave inexistente
+    backgroundColor: colors.surface,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

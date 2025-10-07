@@ -1,8 +1,12 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import type { Account } from '@/db/types';
-import { getLastSessionAccount, clearSessions } from '@/db/auth';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import { getLastSessionAccount, clearSessions } from '@/db/auth';  // Funções de sessão
 
-type User = (Pick<Account, 'id'|'name'|'avatar'> & { email?: string | null }) | null;
+type User = { 
+  id: string;
+  name: string;
+  avatar: string | null;
+  email?: string | null; 
+} | null;
 
 type AuthCtx = {
   user: User;
@@ -16,26 +20,39 @@ const Ctx = createContext<AuthCtx | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);  // Estado para controlar o carregamento
 
+  // Função para recarregar o usuário
   async function reload() {
     try {
-      const acc = await getLastSessionAccount();
+      const acc = await getLastSessionAccount();  // Obtém a última conta ativa
+      console.log('Account loaded from DB:', acc); // Verifique os dados carregados
+
       if (acc) {
-        setUser({ id: acc.id, name: acc.name, avatar: acc.avatar ?? null, email: `${acc.name.toLowerCase()}@email.com` });
+        setUser({
+          id: String(acc.id),  // Garantindo que o id seja string
+          name: acc.name,
+          avatar: acc.avatar ?? null,
+          email: acc.email ?? `${acc.name.toLowerCase()}@email.com`,  // Usando o `email`
+        });
       } else {
-        setUser(null);
+        setUser(null);  // Se não houver usuário, seta o estado para null
       }
+    } catch (e) {
+      console.error("Erro ao carregar a conta:", e);
+      setUser(null);  // Caso ocorra erro, garantir que o estado de usuário seja limpo
     } finally {
-      setLoading(false);
+      setLoading(false);  // Indica que o carregamento foi finalizado
     }
   }
 
-  useEffect(() => { reload(); }, []);
+  useEffect(() => {
+    reload();
+  }, []);
 
   async function signOut() {
-    await clearSessions();
-    setUser(null);
+    await clearSessions();  // Limpa a sessão do banco de dados
+    setUser(null);  // Limpa o estado do usuário
   }
 
   const value = useMemo(() => ({ user, loading, setUser, reload, signOut }), [user, loading]);

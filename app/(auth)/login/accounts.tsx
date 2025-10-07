@@ -7,7 +7,7 @@ import { listAccounts } from '@/db/accounts';
 import type { Account } from '@/db/types';
 import { AccountListCard } from '@/components/common/AccountListCard';
 import { Screen } from '@/components/layout/Screen';
-import Feather from '@expo/vector-icons/Feather'
+import Feather from '@expo/vector-icons/Feather';
 
 export default function AccountsScreen() {
   const router = useRouter();
@@ -41,16 +41,19 @@ export default function AccountsScreen() {
       {/* Header com gradiente */}
       <View style={styles.headerWrap}>
         <LinearGradient {...gradients.primary} style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}><Text style={{ color: '#fff'}}>{<Feather name="arrow-left" size={24} color="white" />}</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={{ color: '#fff' }}>
+              <Feather name="arrow-left" size={24} color="white" />
+            </Text>
+          </TouchableOpacity>
           <Text style={styles.headerTitle}>Login</Text>
         </LinearGradient>
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* painel claro sobre o gradiente */}
         <View style={styles.panel}>
-          <Text style={styles.h1}>Bem vindo de volta 👋</Text>
-          <Text style={styles.sub}>Olá, faça login para continuar!</Text>
+          <Text style={styles.h1}>Bem vindo</Text>
 
           {loading ? (
             <View style={styles.loading}>
@@ -59,8 +62,8 @@ export default function AccountsScreen() {
             </View>
           ) : accounts.length === 0 ? (
             <View style={styles.empty}>
-              <Text style={{ color: colors.muted, textAlign: 'center' }}>
-                Nenhuma conta encontrada.{'\n'}Toque abaixo para adicionar.
+              <Text style={{ color: colors.muted, textAlign: 'center', fontSize: 14 }}>
+                Parece que você ainda não cadastrou nenhuma conta.
               </Text>
             </View>
           ) : (
@@ -76,21 +79,28 @@ export default function AccountsScreen() {
             />
           )}
         </View>
+      </ScrollView>
 
-        {/* CTA Entrar */}
+      {/* Footer with buttons */}
+      <View style={styles.footer}>
         <TouchableOpacity
-          disabled={!selected}
-          onPress={goToPassword}
-          style={[styles.btn, { opacity: selected ? 1 : 0.4 }]}
+          onPress={() => {
+            if (accounts.length === 0) {
+              router.push('/(auth)/login/connect-another');
+            } else {
+              goToPassword();
+            }
+          }}
+          style={styles.btn}
         >
-          <Text style={styles.btnText}>Entrar</Text>
+          <Text style={styles.btnText}>{accounts.length === 0 ? 'Cadastrar conta' : 'Entrar'}</Text>
         </TouchableOpacity>
 
         {/* Ajuda */}
-        <TouchableOpacity onPress={() => { /* abrir suporte */ }} style={{ alignSelf: 'center', marginTop: 12 }}>
-          <Text style={{ color: colors.primaryStart, fontWeight: '700' }}>Preciso de ajuda</Text>
+        <TouchableOpacity onPress={() => { /* abrir suporte */ }} style={{ marginTop: 12 }}>
+          <Text style={{ color: colors.primaryStart, fontWeight: '700', textAlign: 'center' }}>Preciso de ajuda</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </Screen>
   );
 }
@@ -101,24 +111,32 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#fff', fontSize: 22, fontWeight: '800', marginTop: 8 },
 
   panel: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffffff',
     marginTop: -12,
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
     padding: spacing.lg,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: -2 },
   },
 
-  h1: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 4 },
+  h1: { fontSize: 20, fontWeight: '700', color: colors.text, marginBottom: 4, textAlign: 'center', paddingTop: 20 },
   sub: { color: colors.muted, marginBottom: spacing.md },
 
-  btn: { backgroundColor: colors.primaryStart, height: 52, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg },
-  btnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
-
   loading: { alignItems: 'center', paddingVertical: spacing.lg },
-  empty: { backgroundColor: '#F3F4F6', borderRadius: radius.lg, padding: spacing.lg, alignItems: 'center' },
+  empty: { padding: spacing.lg, alignItems: 'center' },
+
+  // Scroll View container style
+  scrollContainer: {
+    flex: 1, // Take available space
+    paddingHorizontal: spacing.lg,
+    paddingBottom: 350, // Some extra space to prevent the footer from overlapping
+  },
+
+  // Footer styles
+  footer: {
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+    justifyContent: 'flex-end', // Ensures buttons are at the bottom
+    alignItems: 'center', // Center-align buttons
+  },
+
+  btn: { backgroundColor: colors.primaryStart, height: 52, paddingHorizontal: 100, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center', marginTop: spacing.lg },
+  btnText: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });
