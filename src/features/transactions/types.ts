@@ -6,9 +6,8 @@ export type Transaction = {
   id: string;
   title: string;
   subtitle?: string;
-  amount: number;      // use negativo para saída, positivo para entrada
-  date: number;        // epoch ms
-  direction: TransactionDirection;
-  status: TransactionStatus;
-  category: TransactionCategory;
+  amount: number;
+  date: number; // epoch ms
+  status: 'completed' | 'pending' | 'failed';
+  category: 'pix' | 'transfer' | 'card' | 'purchase' | 'cashback' | 'refund';
 };
